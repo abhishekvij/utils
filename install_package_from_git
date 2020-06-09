@@ -1,0 +1,45 @@
+#!/bin/bash    
+# This script allows you to install a package from S3 codecommit git repository in a conda environment
+# Usage: sh install_package_from_git -e conda_environment_name -r test_repo -b dev_branch
+while getopts e:r:b: flag
+do
+    case "${flag}" in
+        e) conda_environment=${OPTARG};;
+        r) git_repository_name=${OPTARG};;
+		b) git_branch=${OPTARG};;
+    esac
+done
+echo "Installing package to conda environment: $conda_environment";
+echo "fom git repository: $git_repository_name and branch $git_branch";
+
+# Remove if an existing directory exists
+echo "Creating temp folder for download"
+if ( ! -d tango_build_temp/$git_repository_name ) 
+then
+	echo "Removing Existing directory and creating new one"
+	rm -rf git_temp_build/$git_repository_name
+	mkdir git_temp_build/$git_repository_name
+	echo "Created : git_temp_build/$git_repository_name"
+else
+	mkdir git_temp_build/$git_repository_name
+	echo "Created : git_temp_build/$git_repository_name"
+
+fi
+
+echo "This will build packages based on git-branch"
+git_path='https://git-codecommit.us-east-1.amazonaws.com/v1/repos/'$git_repository_name
+git init
+git remote add origin 
+git config --global credential.helper '!aws codecommit credential-helper $@'
+git config --global credential.UseHttpPath true
+git remote -v
+
+
+
+git clone -b $git_branch --single-branch $git_path git_temp_build/$git_repository_name
+eval "$(conda shell.bash hook)"
+conda activate $conda_environment
+pip install git_temp_build/$git_repository_name/
+
+echo "Removing temp files"
+rm -rf git_temp_build/$git_repository_name
