@@ -1,4 +1,5 @@
 #!/bin/bash    
+# Author : Abhishek Vij <abhishek.vij@gmail.com>
 # This script allows you to install a package from S3 codecommit git repository in a conda environment
 # Usage: sh install_package_from_git -e conda_environment_name -r test_repo -b dev_branch
 while getopts e:r:b: flag
