@@ -15,7 +15,7 @@ echo "fom git repository: $git_repository_name and branch $git_branch";
 
 # Remove if an existing directory exists
 echo "Creating temp folder for download"
-if ( ! -d tango_build_temp/$git_repository_name ) 
+if ( ! -d git_temp_build/$git_repository_name ) 
 then
 	echo "Removing Existing directory and creating new one"
 	rm -rf git_temp_build/$git_repository_name
